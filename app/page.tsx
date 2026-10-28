@@ -3,74 +3,103 @@
 import { useState } from 'react';
 
 export default function Home() {
-  const [email, setEmail] = useState('');
-  const [submitted, setSubmitted] = useState(false);
+  const [selectedService, setSelectedService] = useState('debutant');
+  const [userName, setUserName] = useState('');
+  const [booked, setBooked] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const services: Record<string, { title: string; price: string; desc: string }> = {
+    debutant: {
+      title: "Éveil & Technique Vocale de Base",
+      price: "15 000 XOF / mois",
+      desc: "Idéal pour maîtriser sa respiration, placer sa voix et éliminer les tensions."
+    },
+    chorale: {
+      title: "Harmonisation & Chant Choral",
+      price: "25 000 XOF / mois",
+      desc: "Apprenez à chanter en polyphonie et à écouter les autres pupitres."
+    },
+    pro: {
+      title: "Coaching Scénique & Studio Pro",
+      price: "45 000 XOF / mois",
+      desc: "Accompagnement personnalisé pour enregistrement et performance live."
+    }
+  };
+
+  const handleBooking = (e: React.FormEvent) => {
     e.preventDefault();
-    if (email) {
-      setSubmitted(true);
+    if (userName) {
+      setBooked(true);
     }
   };
 
   return (
-    <main style={{ minHeight: '100vh', backgroundColor: '#0f172a', color: '#ffffff', fontFamily: 'sans-serif', padding: '2rem 1rem' }}>
-      <div style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
+    <main style={{ minHeight: '100vh', backgroundColor: '#0b0f19', color: '#ffffff', fontFamily: 'sans-serif', padding: '1.5rem 1rem' }}>
+      <div style={{ maxWidth: '700px', margin: '0 auto' }}>
         
         {/* En-tête */}
-        <span style={{ backgroundColor: '#3b82f6', color: '#fff', padding: '0.4rem 1rem', borderRadius: '20px', fontSize: '0.85rem', fontWeight: 'bold' }}>
-          ✨ Plateforme Professionnelle
-        </span>
-        <h1 style={{ fontSize: '2.5rem', marginTop: '1rem', marginBottom: '0.5rem' }}>Vocal Coach Pro</h1>
-        <p style={{ color: '#94a3b8', fontSize: '1.1rem', marginBottom: '2rem' }}>
-          La solution ultime de coaching vocal et de chorale en ligne pour propulser votre voix.
-        </p>
+        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+          <span style={{ backgroundColor: '#2563eb', color: '#fff', padding: '0.3rem 0.8rem', borderRadius: '15px', fontSize: '0.75rem', fontWeight: 'bold' }}>
+            ✨ PRODUCTION READY
+          </span>
+          <h1 style={{ fontSize: '2rem', marginTop: '0.8rem', marginBottom: '0.3rem' }}>Vocal Coach Pro</h1>
+          <p style={{ color: '#94a3b8', fontSize: '0.95rem' }}>
+            Sélectionnez un service, inscrivez votre client et lancez la session immédiatement.
+          </p>
+        </div>
 
-        {/* Section Inscription / Premier Client */}
-        <div style={{ backgroundColor: '#1e293b', padding: '2rem', borderRadius: '12px', border: '1px solid #334155', marginBottom: '2rem', textAlign: 'left' }}>
-          <h3 style={{ marginTop: 0, color: '#38bdf8' }}>Espace Inscription - Premier Élève</h3>
-          <p style={{ fontSize: '0.95rem', color: '#cbd5e1' }}>
-            Inscrivez votre premier élève ou testez l'accès à la plateforme de coaching dès maintenant :
+        {/* Sélection des services */}
+        <h3 style={{ fontSize: '1.1rem', color: '#38bdf8', marginBottom: '0.8rem' }}>1. Choisissez le service vocal</h3>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '10px', marginBottom: '1.5rem' }}>
+          {Object.entries(services).map(([key, val]) => (
+            <div 
+              key={key}
+              onClick={() => { setSelectedService(key); setBooked(false); }}
+              style={{ 
+                backgroundColor: selectedService === key ? '#1e293b' : '#111827', 
+                border: selectedService === key ? '2px solid #3b82f6' : '1px solid #374151',
+                padding: '1rem', 
+                borderRadius: '8px', 
+                cursor: 'pointer'
+              }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold', marginBottom: '0.3rem' }}>
+                <span>{val.title}</span>
+                <span style={{ color: '#38bdf8' }}>{val.price}</span>
+              </div>
+              <p style={{ fontSize: '0.85rem', color: '#9ca3af', margin: 0 }}>{val.desc}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Formulaire de réservation / inscription du client */}
+        <div style={{ backgroundColor: '#1e293b', padding: '1.5rem', borderRadius: '8px', border: '1px solid #374151' }}>
+          <h3 style={{ fontSize: '1.1rem', color: '#38bdf8', marginTop: 0, marginBottom: '0.5rem' }}>2. Inscrire le client au service</h3>
+          <p style={{ fontSize: '0.85rem', color: '#94a3b8', marginBottom: '1rem' }}>
+            Service sélectionné : <strong style={{ color: '#fff' }}>{services[selectedService].title}</strong>
           </p>
 
-          {submitted ? (
-            <div style={{ backgroundColor: '#065f46', color: '#d1fae5', padding: '1rem', borderRadius: '8px', textAlign: 'center', fontWeight: 'bold' }}>
-              🎉 Inscription réussie ! Bienvenue sur Vocal Coach Pro. Le compte de test est actif.
+          {booked ? (
+            <div style={{ backgroundColor: '#065f46', color: '#d1fae5', padding: '1rem', borderRadius: '6px', textAlign: 'center' }}>
+              ✅ Inscription validée pour <strong style={{ color: '#fff' }}>{userName}</strong> ! Le client peut accéder au studio virtuel.
             </div>
           ) : (
-            <form onSubmit={handleSubmit} style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginTop: '1rem' }}>
+            <form onSubmit={handleBooking} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               <input 
-                type="email" 
-                placeholder="Entrez l'email de l'élève..." 
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                type="text" 
+                placeholder="Nom complet du client ou élève..." 
+                value={userName}
+                onChange={(e) => setUserName(e.target.value)}
                 required
-                style={{ flex: '1', padding: '0.75rem', borderRadius: '6px', border: '1px solid #475569', backgroundColor: '#0f172a', color: '#fff', minWidth: '200px' }}
+                style={{ padding: '0.75rem', borderRadius: '6px', border: '1px solid #4b5563', backgroundColor: '#0b0f19', color: '#fff' }}
               />
-              <button type="submit" style={{ backgroundColor: '#2563eb', color: '#fff', border: 'none', padding: '0.75rem 1.5rem', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' }}>
-                Inscrire l'élève
+              <button type="submit" style={{ backgroundColor: '#2563eb', color: '#fff', border: 'none', padding: '0.75rem', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' }}>
+                Valider et Activer l'accès
               </button>
             </form>
           )}
         </div>
 
-        {/* Aperçu des fonctionnalités du SaaS */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem', textAlign: 'left' }}>
-          <div style={{ backgroundColor: '#1e293b', padding: '1.5rem', borderRadius: '8px', border: '1px solid #334155' }}>
-            <h4 style={{ color: '#38bdf8', marginTop: 0 }}>🎤 Cours en Direct</h4>
-            <p style={{ fontSize: '0.85rem', color: '#94a3b8' }}>Sessions de vocalises et suivi interactif en HD.</p>
-          </div>
-          <div style={{ backgroundColor: '#1e293b', padding: '1.5rem', borderRadius: '8px', border: '1px solid #334155' }}>
-            <h4 style={{ color: '#38bdf8', marginTop: 0 }}>📊 Analyse Vocale</h4>
-            <p style={{ fontSize: '0.85rem', color: '#94a3b8' }}>Suivi des progrès de justesse et de tessiture.</p>
-          </div>
-          <div style={{ backgroundColor: '#1e293b', padding: '1.5rem', borderRadius: '8px', border: '1px solid #334155' }}>
-            <h4 style={{ color: '#38bdf8', marginTop: 0 }}>💳 Paiement Sécurisé</h4>
-            <p style={{ fontSize: '0.85rem', color: '#94a3b8' }}>Gestion des abonnements et abonnés intégrée.</p>
-          </div>
-        </div>
-
       </div>
     </main>
   );
-            }
+}
